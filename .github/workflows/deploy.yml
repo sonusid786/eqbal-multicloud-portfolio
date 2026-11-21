@@ -1,0 +1,30 @@
+
+name: Deploy Portfolio to AWS S3
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::590184127201:role/GithubActions-S3-deploy-role
+          aws-region: ap-southeast-2
+
+      - name: Deploy website to S3
+        run: |
+          aws s3 sync ./eqbal-multicloud-portfolio/ s3://eqbal-multicloud-portfolio/ --delete
+
